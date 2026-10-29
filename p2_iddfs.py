@@ -1,45 +1,39 @@
+# AIM: Implement IDDFS Algorithm
 
 from RMP import dict_gn
 
 start = 'Arad'
 goal = 'Bucharest'
-result = ''
 
-def DLS(city, visitedstack, startlimit, endlimit):
-    global result
-    found = 0
-    result = result + city + ' '
-    visitedstack.append(city)
+
+def DLS(city, visited, depth, limit):
+    print(city, end=' ')
+
     if city == goal:
-        return 1
-    if startlimit == endlimit:
-        return 0
-    for eachcity in dict_gn[city].keys():
-        if eachcity not in visitedstack:
-            found = DLS(eachcity, visitedstack, startlimit+1, endlimit)
-            if found:
-                return found
+        return True
 
-def IDDFS(city, visitedstack, endlimit):
-    global result
-    for i in range(0, endlimit):
-        print("Searching at Limit: ",i)
-        found = DLS(city, visitedstack, 0, i)
-        if found:
-            print("Found")
-            break
-        else:
-            print("Not Found! ")
-            print(result)
-            print("-----")
-            result = ' '
-            visitedstack = []
+    if depth == limit:
+        return False
 
-def main():
-    visitedstack = []
-    IDDFS(start, visitedstack, 9)
-    print(f"IDDFS Traversal from {start} to  {goal} is: ")
-    print(result)
-    print()
+    visited.append(city)
 
-main()            
+    for neighbor in dict_gn[city]:
+        if neighbor not in visited:
+            if DLS(neighbor, visited, depth + 1, limit):
+                return True
+
+    return False
+
+
+def IDDFS():
+    for limit in range(9):
+        print("\nSearching at Limit:", limit)
+
+        if DLS(start, [], 0, limit):
+            print("\nGoal Found!")
+            return
+
+        print("\nNot Found!")
+
+
+IDDFS()
