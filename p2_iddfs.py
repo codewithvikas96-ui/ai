@@ -1,4 +1,4 @@
-import queue as Q
+
 from RMP import dict_gn
 
 start = 'Arad'
