@@ -1,37 +1,36 @@
+# AIM: Implement A* Search Algorithm
 
-import queue as Q
-from RMP import dict_gn
-from RMP import dict_hn
+import queue
+from RMP import dict_gn, dict_hn
 
 start = 'Arad'
 goal = 'Bucharest'
-result = ''
 
-def get_fn(citystr):
-    cities = citystr.split(" , ")
-    hn = gn = 0
-    for ctr in range(0, len(cities)-1):
-        gn = gn + dict_gn[cities[ctr]][cities[ctr+1]]
-    hn = dict_hn[cities[len(cities)-1]]
-    return(hn + gn)
 
-def expand(cityq):
-    global result
-    tot, citystr, thiscity=cityq.get()
-    if thiscity == goal:
-        result = citystr + " : : " + str(tot)
-        return
-    for cty in dict_gn[thiscity]:
-        cityq.put((get_fn(citystr + " , " + cty), citystr + " , " + cty, cty))
-    expand(cityq)
+def get_fn(path):
+    cities = path.split(" , ")
+    cost = sum(
+        dict_gn[cities[i]][cities[i + 1]]
+        for i in range(len(cities) - 1)
+    )
+    return cost + dict_hn[cities[-1]]
+
 
 def main():
-    cityq = Q.PriorityQueue()
-    thiscity = start
-    cityq.put((get_fn(start),start,thiscity))
-    expand(cityq)
-    print("The A* path with the total is: ")
-    print(result)
-    print()
+    q = queue.PriorityQueue()
+    q.put((get_fn(start), start, start))
+
+    while not q.empty():
+        total, path, city = q.get()
+
+        if city == goal:
+            print("The A* path with total cost is:")
+            print(path, "::", total)
+            return
+
+        for neighbor in dict_gn[city]:
+            new_path = path + " , " + neighbor
+            q.put((get_fn(new_path), new_path, neighbor))
+
 
 main()
